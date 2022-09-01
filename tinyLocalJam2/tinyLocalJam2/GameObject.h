@@ -5,6 +5,8 @@ enum playerDirection {
 	LEFT, RIGHT, UP, DOWN, COUNT
 };
 
+enum PlayerSelection{P1,P2,COUNT};
+
 class GameObject {
 
 	int length;
@@ -15,15 +17,17 @@ class GameObject {
 	Point parentPos;
 	Point startPos;
 	Point boardSize;
+	PlayerSelection playerSelection;
 
 
 public:
-	GameObject(Point startPos, int length, int speed, playerDirection dir, Point boardSize) {
+	GameObject(Point startPos, int length, int speed, playerDirection dir, Point boardSize, PlayerSelection playerSelection) {
 		this->startPos = startPos;
 		this->length = length;
 		this->speed = speed;
 		this->myDirection = dir;
 		this->boardSize = boardSize;
+		this->playerSelection = playerSelection;
 		positions[0] = startPos;
 		GetStartPositions();
 	}
@@ -46,8 +50,11 @@ public:
 	void IncreaseInSize(int value) {
 		if (value == 0)
 			return;
-		else if (value < 0 && value <= -length)
+		else if (value < 0 && value <= -length) {
+			if (length == 1)
+				return;
 			length = 1;
+		}
 		else
 			length += value;
 		Point* tempArray = new Point[length];
@@ -62,19 +69,38 @@ public:
 
 
 	void PlayerInput() {
-		if (GetKeyState('A') && myDirection != RIGHT) {
-			myDirection = LEFT;
+		switch (playerSelection)
+		{
+		case P1:
+			if (GetKeyState('A') && myDirection != RIGHT) {
+				myDirection = LEFT;
+			}
+			else if (GetKeyState('D') && myDirection != LEFT) {
+				myDirection = RIGHT;
+			}
+			else if (GetKeyState('W') && myDirection != DOWN) {
+				myDirection = UP;
+			}
+			else if (GetKeyState('S') && myDirection != UP) {
+				myDirection = DOWN;
+			}
+			break;
+		case P2:
+			if (GetKeyState('J') && myDirection != RIGHT) {
+				myDirection = LEFT;
+			}
+			else if (GetKeyState('L') && myDirection != LEFT) {
+				myDirection = RIGHT;
+			}
+			else if (GetKeyState('I') && myDirection != DOWN) {
+				myDirection = UP;
+			}
+			else if (GetKeyState('K') && myDirection != UP) {
+				myDirection = DOWN;
+			}
+			break;
 		}
-		else if (GetKeyState('D') && myDirection != LEFT) {
-			myDirection = RIGHT;
-		}
-		else if (GetKeyState('W') && myDirection != DOWN) {
-			myDirection = UP;
-		}
-		else if (GetKeyState('S') && myDirection != UP) {
-			myDirection = DOWN;
-		}
-		Move();
+
 	}
 
 	void Die() {
