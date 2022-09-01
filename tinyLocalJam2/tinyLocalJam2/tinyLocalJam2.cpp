@@ -2,10 +2,26 @@
 //
 
 #include <iostream>
+#include "renderer.h"
+#include <chrono>
+#include <thread>
 
 int main()
 {
-    std::cout << "Hello World!\n";
+
+	Renderer rend(Point(60,30));
+	rend.DrawCharacter('O', Point(40, 20));
+	Point pos(10, 10);
+
+
+	while (true) {
+		rend.DrawCharacter('O', pos);
+		pos.x++;
+
+		rend.Update();
+		std::this_thread::sleep_for(std::chrono::milliseconds(250));
+	}
+
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
