@@ -9,22 +9,28 @@ class GameObject {
 
 	int length;
 	int speed;
+	int score;
 	playerDirection myDirection;
 	Point* positions = new Point[length];
 	Point parentPos;
 	Point startPos;
+	Point boardSize;
 
 
 public:
-	GameObject(Point startPos, int length, int speed, playerDirection dir) {
+	GameObject(Point startPos, int length, int speed, playerDirection dir, Point boardSize) {
 		this->startPos = startPos;
 		this->length = length;
 		this->speed = speed;
 		this->myDirection = dir;
+		this->boardSize = boardSize;
 		positions[0] = startPos;
 		GetStartPositions();
 	}
 
+	void GainScore(int value) {
+		score += value;
+	}
 
 	void GetStartPositions() {
 		for (size_t i = 1; i < length; i++)
@@ -37,9 +43,13 @@ public:
 		}
 	}
 
-
 	void IncreaseInSize(int value) {
-		length += value;
+		if (value == 0)
+			return;
+		else if (value < 0 && value <= -length)
+			length = 1;
+		else
+			length += value;
 		Point* tempArray = new Point[length];
 		for (size_t i = 0; i < length -1; i++)
 		{
@@ -68,7 +78,7 @@ public:
 	}
 
 	void Die() {
-
+		IncreaseInSize((length - 2) * -1);
 	}
 
 	bool CollisionCheck() {
@@ -76,7 +86,7 @@ public:
 			Die();
 			return false;
 		}
-		else if (positions[0].x >= 99 && myDirection == RIGHT) {
+		else if (positions[0].x >= boardSize.x && myDirection == RIGHT) {
 			Die();
 			return false;
 		}
@@ -84,7 +94,7 @@ public:
 			Die();
 			return false;
 		}
-		else if (positions[0].y >= 99 && myDirection == DOWN) {
+		else if (positions[0].y >= boardSize.y && myDirection == DOWN) {
 			Die();
 			return false;
 		}
