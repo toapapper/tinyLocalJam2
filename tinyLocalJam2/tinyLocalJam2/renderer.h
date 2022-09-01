@@ -69,6 +69,9 @@ public:
 	}
 
 	void DrawCharacter(char character, Point position) {
+		if (position.x < 0 || position.x > _size.x || position.y < 0 || position.y > _size.y)
+			return;
+
 		pixels[_size.x * position.y + position.x] = character;
 	}
 	

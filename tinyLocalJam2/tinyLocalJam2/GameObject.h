@@ -2,7 +2,7 @@
 #include "windows.h"
 
 enum playerDirection {
-	LEFT, RIGHT, UP, DOWN, COUNT
+	LEFT, RIGHT, UP, DOWN
 };
 
 enum PlayerSelection{P1,P2,COUNT};
@@ -37,13 +37,14 @@ public:
 	}
 
 	void GetStartPositions() {
-		for (size_t i = 1; i < length; i++)
+		for (int i = 1; i < length; i++)
 		{
 			if (myDirection == RIGHT)
 				positions[i].x = positions[0].x - i;
 			else
 				positions[i].x = positions[0].x + i;
 
+			positions[i].y = startPos.y;
 		}
 	}
 
@@ -58,7 +59,7 @@ public:
 		else
 			length += value;
 		Point* tempArray = new Point[length];
-		for (size_t i = 0; i < length -1; i++)
+		for (int i = 0; i < length -1; i++)
 		{
 			tempArray[i] = positions[i]; 
 		}
@@ -101,6 +102,7 @@ public:
 			break;
 		}
 
+		Move();
 	}
 
 	void Die() {
@@ -176,7 +178,9 @@ public:
 		PlayerInput();
 	}
 
-	void Draw() {
-
+	void Draw(Renderer& rend) {
+		for (int i = 0; i < length; i++) {
+			rend.DrawCharacter('O', positions[i]);
+		}
 	}
 };

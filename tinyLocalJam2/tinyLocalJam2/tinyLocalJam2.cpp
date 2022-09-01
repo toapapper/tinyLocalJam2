@@ -5,18 +5,23 @@
 #include "renderer.h"
 #include <chrono>
 #include <thread>
+#include "GameObject.h"
 
 int main()
 {
-
-	Renderer rend(Point(60,30));
+	Point canvasSize(60, 30);
+	Renderer rend(canvasSize);
 	rend.DrawCharacter('O', Point(40, 20));
 	Point pos(10, 10);
 
+	GameObject player1(Point(10, 10), 5, 5, RIGHT, canvasSize, P1);
 
 	while (true) {
 		rend.DrawCharacter('O', pos);
 		pos.x++;
+
+		player1.Update();
+		player1.Draw(rend);
 
 		rend.Update();
 		std::this_thread::sleep_for(std::chrono::milliseconds(250));
