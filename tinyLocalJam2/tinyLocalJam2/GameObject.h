@@ -1,5 +1,6 @@
 #include "renderer.h"
 #include "windows.h"
+//#include <iostream>
 
 enum playerDirection {
 	LEFT, RIGHT, UP, DOWN
@@ -72,33 +73,34 @@ public:
 
 
 	void PlayerInput() {
+
 		switch (playerSelection)
 		{
 		case P1:
-			if (GetKeyState('A') == 1 && myDirection != RIGHT) {
+			if (GetAsyncKeyState('A') < 0 && myDirection != RIGHT) {
 				myDirection = LEFT;
 			}
-			else if (GetKeyState('D') == 1 && myDirection != LEFT) {
+			else if (GetAsyncKeyState('D') < 0 && myDirection != LEFT) {
 				myDirection = RIGHT;
 			}
-			else if (GetKeyState('W') == 1 && myDirection != DOWN) {
+			else if (GetAsyncKeyState('W') < 0 && myDirection != DOWN) {
 				myDirection = UP;
 			}
-			else if (GetKeyState('S') == 1 && myDirection != UP) {
+			else if (GetAsyncKeyState('S') < 0 && myDirection != UP) {
 				myDirection = DOWN;
 			}
 			break;
 		case P2:
-			if (GetKeyState('J') && myDirection != RIGHT) {
+			if (GetAsyncKeyState('J') < 0 && myDirection != RIGHT) {
 				myDirection = LEFT;
 			}
-			else if (GetKeyState('L') && myDirection != LEFT) {
+			else if (GetAsyncKeyState('L') < 0 && myDirection != LEFT) {
 				myDirection = RIGHT;
 			}
-			else if (GetKeyState('I') && myDirection != DOWN) {
+			else if (GetAsyncKeyState('I') < 0 && myDirection != DOWN) {
 				myDirection = UP;
 			}
-			else if (GetKeyState('K') && myDirection != UP) {
+			else if (GetAsyncKeyState('K') < 0 && myDirection != UP) {
 				myDirection = DOWN;
 			}
 			break;
