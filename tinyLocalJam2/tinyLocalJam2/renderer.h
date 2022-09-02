@@ -21,6 +21,18 @@ public:
 		this->y = y;
 	}
 
+	Point(const Point& other):x(other.x), y(other.y) {}
+
+	const bool operator==(const Point& rhs) {
+		return rhs.x == this->x && rhs.y == this->y;
+	}
+
+	const Point& operator=(const Point& other) {
+		this->x = other.x;
+		this->y = other.y;
+		return *this;
+	}
+
 };
 
 
@@ -66,6 +78,10 @@ public:
 	}
 	~Renderer() {
 		delete[] pixels;
+	}
+
+	void ClearScreen() {
+		system("cls");
 	}
 
 	void DrawCharacter(char character, Point position) {

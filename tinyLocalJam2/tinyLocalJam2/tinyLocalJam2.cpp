@@ -6,28 +6,57 @@
 #include <chrono>
 #include <thread>
 #include "GameObject.h"
+#include "Apples.h"
 
 int main()
 {
 	Point canvasSize(60, 30);
 	Renderer rend(canvasSize);
-	rend.DrawCharacter('O', Point(40, 20));
-	Point pos(10, 10);
+	AppleEngine* apples = new AppleEngine(rend, canvasSize);
 
-	GameObject player1(Point(10, 10), 5, 5, UP, canvasSize, P1);
-	GameObject player2(Point(5, 5), 5, 5, DOWN, canvasSize, P2);
+	GameObject player1(Point(5, 5), 5, 5, RIGHT, canvasSize, P1, apples);
+	GameObject player2(Point(55, 25), 5, 5, LEFT, canvasSize, P2, apples);
+
+	int maxDelay = 100, minDelay = 50;
+	unsigned char gameSpeed = maxDelay;
 
 	while (true) {
-		rend.DrawCharacter('O', pos);
-		pos.x++;
 
 		player1.Update();
-		player1.Draw(rend);
 		player2.Update();
+		player1.PlayerCollisionCheck(player2);
+		player2.PlayerCollisionCheck(player1);
+		player1.Draw(rend);
 		player2.Draw(rend);
+		apples->Draw();
+
+		if (player1.dead && player2.dead) {
+			rend.ClearScreen();
+			std::cout << "================== NO ONE WINS :|  ==================" << std::endl;
+			break;
+		}
+		else if (player1.dead) {
+			rend.ClearScreen();
+			std::cout << "==================PLAYER 2 WINS! (The X-snake) ==================" << std::endl;
+			break;
+		}
+		else if (player2.dead) {
+			rend.ClearScreen();
+			std::cout << "==================PLAYER 1 WINS! (The O-snake)==================" << std::endl;
+			break;
+		}
+
+		if (gameSpeed > minDelay) {
+			gameSpeed--;
+		}
+
+		apples->Update();
 		rend.Update();
-		std::this_thread::sleep_for(std::chrono::milliseconds(250));
+		std::this_thread::sleep_for(std::chrono::milliseconds(gameSpeed));
 	}
+
+	char a;
+	std::cin >> a;
 
 }
 

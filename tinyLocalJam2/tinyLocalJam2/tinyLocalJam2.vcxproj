@@ -130,6 +130,7 @@
     <ClCompile Include="tinyLocalJam2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Apples.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="renderer.h" />
   </ItemGroup>

@@ -1,5 +1,8 @@
+#pragma once
+
 #include "renderer.h"
 #include "windows.h"
+#include "Apples.h"
 //#include <iostream>
 
 enum playerDirection {
@@ -14,22 +17,34 @@ class GameObject {
 	int speed;
 	int score;
 	playerDirection myDirection;
-	Point* positions = new Point[length];
+	std::vector<Point> positions;
 	Point parentPos;
 	Point startPos;
 	Point boardSize;
 	PlayerSelection playerSelection;
+	AppleEngine* apples;
 
+	bool boostAvailable = false;
+	bool startInvincibility = true;
 
 public:
-	GameObject(Point startPos, int length, int speed, playerDirection dir, Point boardSize, PlayerSelection playerSelection) {
+	bool dead = false;
+
+	GameObject(Point startPos, int length, int speed, playerDirection dir, Point boardSize, PlayerSelection playerSelection, AppleEngine* apples):apples(apples) {
 		this->startPos = startPos;
 		this->length = length;
 		this->speed = speed;
 		this->myDirection = dir;
 		this->boardSize = boardSize;
 		this->playerSelection = playerSelection;
-		positions[0] = startPos;
+
+		positions = std::vector<Point>(length);
+
+		for (int i = 0; i < length; i++) {
+			positions[i] = startPos;
+		}
+
+		//positions[0] = startPos;
 		GetStartPositions();
 	}
 
@@ -50,32 +65,38 @@ public:
 	}
 
 	void ChangeSize(int size) {//TODO
-		if (size <= 0)
+		if (size == 0)
 			return;
-		
-		if (size < length) {
+		if (size <= length)
+		{
 			length = size;
 		}
-		else if (size > length) {
-			length = size;
-			Point* tempArray = new Point[length];
-			for (int i = 0; i < length - 1; i++)
+		else
+		{
+
+			for (int i = 0; i < size - length; i++)
 			{
-				tempArray[i] = positions[i];
+				positions.push_back(positions[length-1]);
 			}
-			tempArray[length - 1] = tempArray[length - 2];
-			delete[] positions;
-			positions = tempArray;
+			length = size;
 		}
 	}
 
+	void Boost() {
+		Move(5);
+		boostAvailable = false;
+	}
 
 	void PlayerInput() {
 
 		switch (playerSelection)
 		{
 		case P1:
-			if (GetAsyncKeyState('A') < 0 && myDirection != RIGHT) {
+
+			if (GetAsyncKeyState(VK_LSHIFT) && boostAvailable) {
+				Boost();
+			}
+			else if (GetAsyncKeyState('A') < 0 && myDirection != RIGHT) {
 				myDirection = LEFT;
 			}
 			else if (GetAsyncKeyState('D') < 0 && myDirection != LEFT) {
@@ -87,9 +108,15 @@ public:
 			else if (GetAsyncKeyState('S') < 0 && myDirection != UP) {
 				myDirection = DOWN;
 			}
+			
+
+
 			break;
 		case P2:
-			if (GetAsyncKeyState('J') < 0 && myDirection != RIGHT) {
+			if (GetAsyncKeyState(VK_RSHIFT) && boostAvailable) {
+				Boost();
+			}
+			else if (GetAsyncKeyState('J') < 0 && myDirection != RIGHT) {
 				myDirection = LEFT;
 			}
 			else if (GetAsyncKeyState('L') < 0 && myDirection != LEFT) {
@@ -104,11 +131,32 @@ public:
 			break;
 		}
 
-		Move();
+		Move(1);
+	}
+
+
+	void PlayerCollisionCheck(GameObject other) {
+		for (int i = 0; i < other.positions.size(); i++)
+		{
+			if (positions[0] == other.positions[i])
+			{
+				Die();
+			}
+		}
+		if (startInvincibility)
+			return;
+		for (int i = 1; i < length; i++)
+		{
+			if (positions[0] == positions[i])
+			{
+				Die();
+			}
+		}
 	}
 
 	void Die() {
-		ChangeSize((length - 2) * -1);
+
+		dead = true;
 	}
 
 	bool CollisionCheck() {
@@ -128,51 +176,59 @@ public:
 			Die();
 			return false;
 		}
+		else {
+			if (apples->AppleCheck(positions[0])) {
+				ChangeSize(length + 1);
+				boostAvailable = true;
+			}
+		}
 		return true;
 	}
 
-	void Move() {
+	void Move(int speed) {
 		switch (myDirection)
 		{
 		case LEFT:
 			if (CollisionCheck()) {
-				for (int i = length; i > 0; i--)
+				for (int i = length - 1; i > 0; i--)
 				{
 					positions[i] = positions[i - 1];
 				}
-				positions[0].x--;
+				positions[0].x -= speed;
 			}
 			break;
 		case RIGHT:
 			if (CollisionCheck()) {
-				for (int i = length; i > 0; i--)
+				for (int i = length - 1; i > 0; i--)
 				{
 					positions[i] = positions[i - 1];
 				}
-				positions[0].x++;
+				positions[0].x += speed;
 			}
 			break;
 		case UP:
 			if (CollisionCheck()) {
-				for (int i = length; i > 0; i--)
+				for (int i = length - 1; i > 0; i--)
 				{
 					positions[i] = positions[i - 1];
 				}
-				positions[0].y--;
+				positions[0].y -= speed;
 			}
 			break;
 		case DOWN:
 			if (CollisionCheck()) {
-				for (int i = length; i > 0; i--)
+				for (int i = length - 1; i > 0; i--)
 				{
 					positions[i] = positions[i - 1];
 				}
-				positions[0].y++;
+				positions[0].y += speed;
 			}
 			break;
 		default:
 			break;
 		}
+
+		startInvincibility = false;
 	}
 
 	void Update() {
@@ -185,12 +241,19 @@ public:
 
 		case P1:
 			for (int i = 0; i < length; i++) {
-				rend.DrawCharacter('O', positions[i]);
+				if(i == 0)
+					rend.DrawCharacter('O', positions[i]);
+				else
+					rend.DrawCharacter('o', positions[i]);
+
 			}
 			break;
 		case P2:
 			for (int i = 0; i < length; i++) {
-				rend.DrawCharacter('X', positions[i]);
+				if(i == 0)
+					rend.DrawCharacter('X', positions[i]);
+				else
+					rend.DrawCharacter('x', positions[i]);
 			}
 			break;
 		}
