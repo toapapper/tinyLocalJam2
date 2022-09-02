@@ -183,8 +183,18 @@ public:
 	}
 
 	void Draw(Renderer& rend) {
-		for (int i = 0; i < length; i++) {
-			rend.DrawCharacter('O', positions[i]);
+		switch (playerSelection) {
+
+		case P1:
+			for (int i = 0; i < length; i++) {
+				rend.DrawCharacter('O', positions[i]);
+			}
+			break;
+		case P2:
+			for (int i = 0; i < length; i++) {
+				rend.DrawCharacter('X', positions[i]);
+			}
+			break;
 		}
 	}
 };

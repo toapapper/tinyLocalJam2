@@ -15,6 +15,7 @@ int main()
 	Point pos(10, 10);
 
 	GameObject player1(Point(10, 10), 5, 5, UP, canvasSize, P1);
+	GameObject player2(Point(5, 5), 5, 5, DOWN, canvasSize, P2);
 
 	while (true) {
 		rend.DrawCharacter('O', pos);
@@ -22,7 +23,8 @@ int main()
 
 		player1.Update();
 		player1.Draw(rend);
-
+		player2.Update();
+		player2.Draw(rend);
 		rend.Update();
 		std::this_thread::sleep_for(std::chrono::milliseconds(250));
 	}
