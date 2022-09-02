@@ -14,7 +14,7 @@ int main()
 	rend.DrawCharacter('O', Point(40, 20));
 	Point pos(10, 10);
 
-	GameObject player1(Point(10, 10), 5, 5, RIGHT, canvasSize, P1);
+	GameObject player1(Point(10, 10), 5, 5, UP, canvasSize, P1);
 
 	while (true) {
 		rend.DrawCharacter('O', pos);

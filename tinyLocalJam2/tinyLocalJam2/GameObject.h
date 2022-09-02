@@ -48,16 +48,18 @@ public:
 		}
 	}
 
-	void IncreaseInSize(int value) {
-		if (value == 0)
+	void ChangeSize(int size) {//TODO
+		if (size == 0)
 			return;
-		else if (value < 0 && value <= -length) {
+		else if (size < 0 && size <= -length) {
 			if (length == 1)
 				return;
 			length = 1;
 		}
 		else
-			length += value;
+			length += size;
+
+
 		Point* tempArray = new Point[length];
 		for (int i = 0; i < length -1; i++)
 		{
@@ -73,16 +75,16 @@ public:
 		switch (playerSelection)
 		{
 		case P1:
-			if (GetKeyState('A') && myDirection != RIGHT) {
+			if (GetKeyState('A') == 1 && myDirection != RIGHT) {
 				myDirection = LEFT;
 			}
-			else if (GetKeyState('D') && myDirection != LEFT) {
+			else if (GetKeyState('D') == 1 && myDirection != LEFT) {
 				myDirection = RIGHT;
 			}
-			else if (GetKeyState('W') && myDirection != DOWN) {
+			else if (GetKeyState('W') == 1 && myDirection != DOWN) {
 				myDirection = UP;
 			}
-			else if (GetKeyState('S') && myDirection != UP) {
+			else if (GetKeyState('S') == 1 && myDirection != UP) {
 				myDirection = DOWN;
 			}
 			break;
@@ -106,7 +108,7 @@ public:
 	}
 
 	void Die() {
-		IncreaseInSize((length - 2) * -1);
+		ChangeSize((length - 2) * -1);
 	}
 
 	bool CollisionCheck() {
@@ -134,38 +136,38 @@ public:
 		{
 		case LEFT:
 			if (CollisionCheck()) {
-				positions[0].x--;
 				for (int i = length; i > 0; i--)
 				{
 					positions[i] = positions[i - 1];
 				}
+				positions[0].x--;
 			}
 			break;
 		case RIGHT:
 			if (CollisionCheck()) {
-				positions[0].x++;
 				for (int i = length; i > 0; i--)
 				{
 					positions[i] = positions[i - 1];
 				}
+				positions[0].x++;
 			}
 			break;
 		case UP:
 			if (CollisionCheck()) {
-				positions[0].y--;
 				for (int i = length; i > 0; i--)
 				{
 					positions[i] = positions[i - 1];
 				}
+				positions[0].y--;
 			}
 			break;
 		case DOWN:
 			if (CollisionCheck()) {
-				positions[0].y++;
 				for (int i = length; i > 0; i--)
 				{
 					positions[i] = positions[i - 1];
 				}
+				positions[0].y++;
 			}
 			break;
 		default:
