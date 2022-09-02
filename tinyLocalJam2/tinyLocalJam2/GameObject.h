@@ -50,25 +50,23 @@ public:
 	}
 
 	void ChangeSize(int size) {//TODO
-		if (size == 0)
+		if (size <= 0)
 			return;
-		else if (size < 0 && size <= -length) {
-			if (length == 1)
-				return;
-			length = 1;
+		
+		if (size < length) {
+			length = size;
 		}
-		else
-			length += size;
-
-
-		Point* tempArray = new Point[length];
-		for (int i = 0; i < length -1; i++)
-		{
-			tempArray[i] = positions[i]; 
+		else if (size > length) {
+			length = size;
+			Point* tempArray = new Point[length];
+			for (int i = 0; i < length - 1; i++)
+			{
+				tempArray[i] = positions[i];
+			}
+			tempArray[length - 1] = tempArray[length - 2];
+			delete[] positions;
+			positions = tempArray;
 		}
-		tempArray[length - 1] = tempArray[length - 2];
-		delete positions;
-		positions = tempArray;
 	}
 
 
