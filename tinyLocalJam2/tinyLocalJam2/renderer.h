@@ -138,7 +138,7 @@ public:
 	//Ugly hack to add colour to this game
 	void GameSpecificCharCheck(std::string& str, char character)
 	{
-		if (character == 'a')
+		if (character == 'a' || character == '¤' || character == '*')
 		{
 			str.append("\x1B[31m"); //bright red
 			str.push_back(character);

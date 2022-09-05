@@ -7,7 +7,7 @@
 class AppleEngine {
 	int spawnDelay = 5;//ticks
 	int spawnTimer = 0;
-	Renderer rend;
+	Renderer& rend;
 	Point arenaSize;
 	std::uniform_int_distribution<unsigned> randX;
 	std::uniform_int_distribution<unsigned> randY;
@@ -24,6 +24,7 @@ public:
 			unsigned seed = std::chrono::steady_clock::now().time_since_epoch().count();
 			aaaX = std::default_random_engine(seed);
 	}
+	~AppleEngine(){}
 
 	void Update() {
 		spawnTimer++;

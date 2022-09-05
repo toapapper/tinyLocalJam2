@@ -40,7 +40,7 @@ void Game()
 
 	if (p1Wins > 0 || p2Wins > 0)
 	{
-		//\x1B[36m(Oooooo, top left)\033[0m
+		//\x1B[36mTEXTHÄR\033[0m
 		std::cout << "\nWins: \x1B[36m P1: " << p1Wins << "\033[0m \x1B[33m P2: " << p2Wins << "\033[0m" << '\n' << std::endl;
 	}
 
@@ -69,9 +69,6 @@ void Game()
 	//STart game after this
 
 	AppleEngine* apples = new AppleEngine(rend, canvasSize);
-
-
-
 	GameObject player1(Point(5, 5), 5, 5, RIGHT, canvasSize, P1, apples);
 	GameObject player2(Point(25, 25), 5, 5, LEFT, canvasSize, P2, apples);
 
@@ -93,30 +90,64 @@ void Game()
 		{
 			//rend.ClearScreen();
 			std::cout << "\x1B[32m==================No one WINS! ==================\033[0m" << std::endl;
-			std::cout << "write anything to continue" << std::endl;
-			break;
+			std::cout << "Press ESC to continue" << std::endl;
+			AnimateDeadPlayer(player1, player2, rend);
+			if (hyperMode > 0)
+			{
+				hyperMode--;
+
+				delete apples;
+				apples = new AppleEngine(rend, canvasSize);
+				player1 = GameObject(Point(5, 5), 5, 5, RIGHT, canvasSize, P1, apples);
+				player2 = GameObject(Point(25, 25), 5, 5, LEFT, canvasSize, P2, apples);
+			}
+			else
+			{
+				break;
+			}
 		}
 		else if (player1.dead)
 		{
 			p2Wins++;
 			//rend.ClearScreen();
 			std::cout << "\x1B[33m==================PLAYER 2 WINS! (The X-snake) ==================\033[0m" << std::endl;
-			std::cout << "write anything to continue" << std::endl;
+			std::cout << "Press ESC to continue" << std::endl;
 			AnimateDeadPlayer(player1, player2, rend);
-			break;
+			if (hyperMode > 0)
+			{
+				hyperMode--;
+
+				delete apples;
+				apples = new AppleEngine(rend, canvasSize);
+				player1 = GameObject(Point(5, 5), 5, 5, RIGHT, canvasSize, P1, apples);
+				player2 = GameObject(Point(25, 25), 5, 5, LEFT, canvasSize, P2, apples);
+			}
+			else
+			{
+				break;
+			}
 		}
 		else if (player2.dead)
 		{
 			p1Wins++;
 			//rend.ClearScreen();
 			std::cout << "\x1B[36m==================PLAYER 1 WINS! (The O-snake) ==================\033[0m" << std::endl;
-			std::cout << "write anything to continue" << std::endl;
+			std::cout << "Press ESC to continue" << std::endl;
 			AnimateDeadPlayer(player2, player1, rend);
-			break;
+			if (hyperMode > 0)
+			{
+				hyperMode--;
+
+				delete apples;
+				apples = new AppleEngine(rend, canvasSize);
+				player1 = GameObject(Point(5, 5), 5, 5, RIGHT, canvasSize, P1, apples);
+				player2 = GameObject(Point(25, 25), 5, 5, LEFT, canvasSize, P2, apples);
+			}
+			else
+			{
+				break;
+			}
 		}
-		//while (true)
-		//{
-		//	//TODO: Animate characters after game over...
 
 
 		//}
@@ -131,11 +162,6 @@ void Game()
 	}
 
 	FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
-
-	std::cout << '\a' << std::endl;
-
-	char a;
-	std::cin >> a;
 }
 
 void AnimateDeadPlayer(GameObject& aPlayer,GameObject& anotherPlayer, Renderer& aRend)
@@ -146,20 +172,9 @@ void AnimateDeadPlayer(GameObject& aPlayer,GameObject& anotherPlayer, Renderer& 
 		anotherPlayer.Draw(aRend);
 		aRend.Update();
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
-		if (GetAsyncKeyState(VK_RETURN) < 0)
+		if (GetAsyncKeyState(VK_ESCAPE))
 		{
 			break;
 		}
 	}
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file

@@ -133,6 +133,13 @@
     <ClInclude Include="Apples.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="renderer.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="tinyLocalJam2.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\..\..\Pictures\snake_icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
