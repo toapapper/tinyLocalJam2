@@ -4,7 +4,6 @@
 #include <iostream>
 #include <Windows.h>
 #include <stdlib.h>
-//#include <curses.h>
 
 
 
@@ -34,8 +33,6 @@ public:
 	}
 
 };
-
-
 
 
 class Renderer {
@@ -121,10 +118,14 @@ public:
 		for (int y = -1; y < _size.y + 1; y++) {
 			for (int x = -1; x < _size.x + 1; x++) {
 				if (x == -1 || x == _size.x || y == -1 || y == _size.y) {
-					str.push_back('=');
+					str.append("\033[3;100;30m");
+					str.push_back(' ');
+					str.push_back(' ');
+					str.append("\033[0m");
 				}
 				else {
-					str.push_back(pixels[x + _size.x * y]);
+					GameSpecificCharCheck(str, pixels[x + _size.x * y]);
+					str.push_back(' ');
 				}
 			}
 			str.push_back('\n');
@@ -132,6 +133,33 @@ public:
 		std::cout << str << std::endl;
 
 		ClearDrawCalls();
+	}
+
+	//Ugly hack to add colour to this game
+	void GameSpecificCharCheck(std::string& str, char character)
+	{
+		if (character == 'a')
+		{
+			str.append("\x1B[31m"); //bright red
+			str.push_back(character);
+			str.append("\033[0m");
+		}
+		else if (character == 'x' || character == 'X')
+		{
+			str.append("\x1B[33m"); //bright yellow
+			str.push_back(character);
+			str.append("\033[0m");
+		}
+		else if (character == 'o' || character == 'O')
+		{ 
+			str.append("\x1B[36m"); //bright cyan
+			str.push_back(character);
+			str.append("\033[0m");
+		}
+		else
+		{
+			str.push_back(character);
+		}
 	}
 
 };

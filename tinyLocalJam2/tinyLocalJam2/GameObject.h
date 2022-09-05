@@ -116,16 +116,16 @@ public:
 			if (GetAsyncKeyState(VK_RSHIFT) && boostAvailable) {
 				Boost();
 			}
-			else if (GetAsyncKeyState('J') < 0 && myDirection != RIGHT) {
+			else if ((GetAsyncKeyState(VK_LEFT) < 0 || GetAsyncKeyState('J') < 0) && myDirection != RIGHT) {
 				myDirection = LEFT;
 			}
-			else if (GetAsyncKeyState('L') < 0 && myDirection != LEFT) {
+			else if ((GetAsyncKeyState(VK_RIGHT) < 0 || GetAsyncKeyState('L') < 0) && myDirection != LEFT) {
 				myDirection = RIGHT;
 			}
-			else if (GetAsyncKeyState('I') < 0 && myDirection != DOWN) {
+			else if ((GetAsyncKeyState(VK_UP) < 0 || GetAsyncKeyState('I') < 0) && myDirection != DOWN) {
 				myDirection = UP;
 			}
-			else if (GetAsyncKeyState('K') < 0 && myDirection != UP) {
+			else if (GetAsyncKeyState(VK_DOWN) < 0 && myDirection != UP) {
 				myDirection = DOWN;
 			}
 			break;
