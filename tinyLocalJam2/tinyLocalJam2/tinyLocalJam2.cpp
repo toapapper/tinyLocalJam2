@@ -7,8 +7,10 @@
 #include <thread>
 #include "GameObject.h"
 #include "Apples.h"
+#include "windows.h"
 
 void Game();
+void AnimateDeadPlayer(GameObject& aPlayer, GameObject& anotherPlayer, Renderer& aRend);
 
 bool playing = true;
 int p1Wins = 0;
@@ -16,6 +18,7 @@ int p2Wins = 0;
 
 int main()
 {
+	SetConsoleOutputCP(1252);
 	while (playing)
 	{
 		Game();
@@ -99,6 +102,7 @@ void Game()
 			//rend.ClearScreen();
 			std::cout << "\x1B[33m==================PLAYER 2 WINS! (The X-snake) ==================\033[0m" << std::endl;
 			std::cout << "write anything to continue" << std::endl;
+			AnimateDeadPlayer(player1, player2, rend);
 			break;
 		}
 		else if (player2.dead)
@@ -107,9 +111,15 @@ void Game()
 			//rend.ClearScreen();
 			std::cout << "\x1B[36m==================PLAYER 1 WINS! (The O-snake) ==================\033[0m" << std::endl;
 			std::cout << "write anything to continue" << std::endl;
+			AnimateDeadPlayer(player2, player1, rend);
 			break;
 		}
+		//while (true)
+		//{
+		//	//TODO: Animate characters after game over...
 
+
+		//}
 		if (gameSpeed > minDelay)
 		{
 			gameSpeed--;
@@ -126,6 +136,21 @@ void Game()
 
 	char a;
 	std::cin >> a;
+}
+
+void AnimateDeadPlayer(GameObject& aPlayer,GameObject& anotherPlayer, Renderer& aRend)
+{
+	while (true)
+	{
+		aPlayer.Draw(aRend);
+		anotherPlayer.Draw(aRend);
+		aRend.Update();
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
+		if (GetAsyncKeyState(VK_RETURN) < 0)
+		{
+			break;
+		}
+	}
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

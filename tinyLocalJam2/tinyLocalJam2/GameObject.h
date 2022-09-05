@@ -26,8 +26,10 @@ class GameObject {
 
 	bool boostAvailable = false;
 	bool startInvincibility = true;
+	bool isAnimating = false;
 
 public:
+	bool isAlive = true;
 	bool dead = false;
 
 	GameObject(Point startPos, int length, int speed, playerDirection dir, Point boardSize, PlayerSelection playerSelection, AppleEngine* apples):apples(apples) {
@@ -155,7 +157,7 @@ public:
 	}
 
 	void Die() {
-
+		isAlive = false;
 		dead = true;
 	}
 
@@ -240,20 +242,63 @@ public:
 		switch (playerSelection) {
 
 		case P1:
-			for (int i = 0; i < length; i++) {
-				if(i == 0)
-					rend.DrawCharacter('O', positions[i]);
+			if (isAlive)
+			{
+				for (int i = 0; i < length; i++) {
+					if(i == 0)
+						rend.DrawCharacter('O', positions[i]);
+					else
+						rend.DrawCharacter('o', positions[i]);
+				}
+			}
+			else
+			{
+				if (isAnimating == false)
+				{
+					for (int i = 0; i < length; i++)
+					{
+						rend.DrawCharacter('*', positions[i]);
+					}
+					isAnimating = true;
+				}
 				else
-					rend.DrawCharacter('o', positions[i]);
-
+				{
+					for (int i = 0; i < length; i++)
+					{
+						rend.DrawCharacter('¤', positions[i]);
+					}
+					isAnimating = false;
+				}
 			}
 			break;
 		case P2:
-			for (int i = 0; i < length; i++) {
-				if(i == 0)
-					rend.DrawCharacter('X', positions[i]);
+			if (isAlive)
+			{
+				for (int i = 0; i < length; i++) {
+					if(i == 0)
+						rend.DrawCharacter('X', positions[i]);
+					else
+						rend.DrawCharacter('x', positions[i]);
+				}
+			}
+			else
+			{
+				if (isAnimating == false)
+				{
+					for (int i = 0; i < length; i++)
+					{
+						rend.DrawCharacter('*', positions[i]);
+					}
+					isAnimating = true;
+				}
 				else
-					rend.DrawCharacter('x', positions[i]);
+				{
+					for (int i = 0; i < length; i++)
+					{
+						rend.DrawCharacter('¤', positions[i]);
+					}
+					isAnimating = false;
+				}
 			}
 			break;
 		}
