@@ -10,6 +10,25 @@
 
 int main()
 {
+
+	std::cout << "WELCOME TO SNAKE FORTNITE BATTLE ROYAL!" << std::endl << std::endl;
+	std::cout << "P1 (Ooooo, top left) controls:movement = WASD" << std::endl;
+	std::cout << "			dash = Left shift" << std::endl << std::endl;
+	std::cout << "P2 (Xxxxx, bottom right) controls:movement = IJKL" << std::endl;
+	std::cout << "			dash = Right shift" << std::endl << std::endl;
+
+	std::cout << "Dash is only available after eating an apple. \nTo dash again you need to eat another apple" << std::endl;
+	std::cout << "TO START WRITE SOMETHING" << "\b\b\b\b\b\b\b\b\b";
+
+	char b;
+	std::cin >> b;
+
+
+
+
+
+	//STart game after this
+
 	Point canvasSize(60, 30);
 	Renderer rend(canvasSize);
 	AppleEngine* apples = new AppleEngine(rend, canvasSize);
@@ -31,17 +50,17 @@ int main()
 		apples->Draw();
 
 		if (player1.dead && player2.dead) {
-			rend.ClearScreen();
+			//rend.ClearScreen();
 			std::cout << "================== NO ONE WINS :|  ==================" << std::endl;
 			break;
 		}
 		else if (player1.dead) {
-			rend.ClearScreen();
+			//rend.ClearScreen();
 			std::cout << "==================PLAYER 2 WINS! (The X-snake) ==================" << std::endl;
 			break;
 		}
 		else if (player2.dead) {
-			rend.ClearScreen();
+			//rend.ClearScreen();
 			std::cout << "==================PLAYER 1 WINS! (The O-snake)==================" << std::endl;
 			break;
 		}
@@ -54,6 +73,9 @@ int main()
 		rend.Update();
 		std::this_thread::sleep_for(std::chrono::milliseconds(gameSpeed));
 	}
+
+
+	FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
 
 	char a;
 	std::cin >> a;
