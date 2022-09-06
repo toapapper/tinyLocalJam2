@@ -40,7 +40,6 @@ class Renderer {
 private:
 	Point _size;
 	int _fontSize = 10;
-	//std::vector<std::vector<char>> drawCalls;
 
 	char* pixels;
 	HANDLE hOut;
@@ -115,9 +114,9 @@ public:
 		cls();
 
 		//Draw everything
-		for (int y = -1; y < _size.y + 1; y++) {
-			for (int x = -1; x < _size.x + 1; x++) {
-				if (x == -1 || x == _size.x || y == -1 || y == _size.y) {
+		for (int y = 0; y < _size.y + 1; y++) {
+			for (int x = 0; x < _size.x + 1; x++) {
+				if (x == 0 || x == _size.x || y == 0 || y == _size.y) {
 					str.append("\033[3;100;30m");
 					str.push_back(' ');
 					str.push_back(' ');
@@ -144,15 +143,27 @@ public:
 			str.push_back(character);
 			str.append("\033[0m");
 		}
-		else if (character == 'x' || character == 'X')
+		else if (character == 'x')
 		{
-			str.append("\x1B[33m"); //bright yellow
+			str.append("\x1B[33m"); //yellow
 			str.push_back(character);
 			str.append("\033[0m");
 		}
-		else if (character == 'o' || character == 'O')
+		else if (character == 'X')
+		{
+			str.append("\x1B[93m"); //bright yellow
+			str.push_back(character);
+			str.append("\033[0m");
+		}
+		else if (character == 'o')
 		{ 
-			str.append("\x1B[36m"); //bright cyan
+			str.append("\x1B[36m"); //cyan
+			str.push_back(character);
+			str.append("\033[0m");
+		}
+		else if (character == 'O')
+		{
+			str.append("\x1B[96m"); //bright cyan
 			str.push_back(character);
 			str.append("\033[0m");
 		}
