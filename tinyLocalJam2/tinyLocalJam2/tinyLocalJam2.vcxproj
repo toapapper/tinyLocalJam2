@@ -139,7 +139,7 @@
     <ResourceCompile Include="tinyLocalJam2.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\..\..\Pictures\snake_icon.ico" />
+    <Image Include="..\..\snake_icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
