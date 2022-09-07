@@ -149,6 +149,11 @@ void Game()
 			p2Wins++;
 			//rend.ClearScreen();
 			std::cout << "\x1B[33m==================PLAYER 2 WINS! (The X-snake) ==================\033[0m" << std::endl;
+			if (hyperMode > 0)
+			{
+				std::string temp = (hyperMode >= 10) ? "" : " ";
+				std::cout << "Games left: " << temp << hyperMode << " Wins: \x1B[36m P1: " << p1Wins << "\033[0m \x1B[33m P2: " << p2Wins << "\033[0m" << std::endl;
+			}
 			std::cout << "Press ESC to continue" << std::endl;
 			AnimateDeadPlayer(player1, player2, rend);
 			if (hyperMode > 0)

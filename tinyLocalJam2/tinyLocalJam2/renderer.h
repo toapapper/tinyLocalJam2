@@ -114,9 +114,9 @@ public:
 		cls();
 
 		//Draw everything
-		for (int y = 0; y < _size.y + 1; y++) {
-			for (int x = 0; x < _size.x + 1; x++) {
-				if (x == 0 || x == _size.x || y == 0 || y == _size.y) {
+		for (int y = 0; y < _size.y; y++) {
+			for (int x = 0; x < _size.x; x++) {
+				if (x == 0 || x == _size.x - 1 || y == 0 || y == _size.y - 1) {
 					str.append("\033[3;100;30m");
 					str.push_back(' ');
 					str.push_back(' ');
@@ -127,9 +127,10 @@ public:
 					str.push_back(' ');
 				}
 			}
-			str.push_back('\n');
+			//str.push_back('\n');
+			std::cout << str << std::endl;
+			str = "";
 		}
-		std::cout << str << std::endl;
 
 		ClearDrawCalls();
 	}

@@ -14,21 +14,21 @@ class AppleEngine {
 
 	std::uniform_int_distribution<int> randX;
 	std::uniform_int_distribution<int> randY;
+	bool* applesTemp;
 
 public:
-	bool* apples;
 
 	AppleEngine(Renderer& rend, Point arenaSize) :rend(rend), arenaSize(arenaSize), randX(0, arenaSize.x), randY(0, arenaSize.y)
 	{
-		apples = new bool[arenaSize.x * arenaSize.y];
+		applesTemp = new bool[arenaSize.x * arenaSize.y];
 		for (int i = 0; i < arenaSize.x * arenaSize.y; i++)
 		{
-			apples[i] = false;
+			applesTemp[i] = false;
 		}
 	}
 	~AppleEngine()
 	{
-		delete[] apples;
+		delete[] applesTemp;
 	}
 
 	void Update() {
@@ -37,25 +37,29 @@ public:
 			int x = randX(randomEngine);
 			int y = randY(randomEngine);
 
-			apples[y * arenaSize.x + x] = true;
+			applesTemp[y * arenaSize.x + x] = true;
 
 			spawnTimer = 0;
 		}
 	}
 
 	void Draw() {
-		for (int i = 0; i < arenaSize.x * arenaSize.y; i++)
+
+		for (int x = 0; x < arenaSize.x; x++)
 		{
-			if (apples[i])
-				rend.DrawCharacter('a', Point((i % arenaSize.x), (i - i % arenaSize.x) / arenaSize.x));
+			for (int y = 0; y < arenaSize.y; y++)
+			{
+				if (applesTemp[y * arenaSize.x + x])
+					rend.DrawCharacter('a', Point(x, y));
+			}
 		}
 	}
 
 	bool AppleCheck(Point position) {
 
-		if (apples[position.y * arenaSize.x + position.x])
+		if (applesTemp[position.y * arenaSize.x + position.x])
 		{
-			apples[position.y * arenaSize.x + position.x] = false;
+			applesTemp[position.y * arenaSize.x + position.x] = false;
 			return true;
 		}
 
