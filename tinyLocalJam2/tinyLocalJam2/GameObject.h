@@ -3,7 +3,7 @@
 #include "renderer.h"
 #include "windows.h"
 #include "Apples.h"
-//#include <iostream>
+#include <vector>
 
 enum playerDirection {
 	LEFT, RIGHT, UP, DOWN
@@ -17,26 +17,27 @@ class GameObject {
 	int speed;
 	int score;
 	playerDirection myDirection;
+	playerDirection startDirection;
 	std::vector<Point> positions;
 	Point parentPos;
 	Point startPos;
 	Point boardSize;
 	PlayerSelection playerSelection;
-	AppleEngine* apples;
+	AppleEngine& apples;
 
 	bool boostAvailable = false;
-	bool startInvincibility = true;
 	bool isAnimating = false;
 
 public:
 	bool isAlive = true;
 	bool dead = false;
 
-	GameObject(Point startPos, int length, int speed, playerDirection dir, Point boardSize, PlayerSelection playerSelection, AppleEngine* apples):apples(apples) {
+	GameObject(Point startPos, int length, int speed, playerDirection dir, Point boardSize, PlayerSelection playerSelection, AppleEngine& apples):apples(apples) {
 		this->startPos = startPos;
 		this->length = length;
 		this->speed = speed;
 		this->myDirection = dir;
+		startDirection = dir;
 		this->boardSize = boardSize;
 		this->playerSelection = playerSelection;
 
@@ -50,8 +51,28 @@ public:
 		GetStartPositions();
 	}
 
-	void GainScore(int value) {
-		score += value;
+	~GameObject()
+	{
+		positions.clear();
+	}
+
+	void Reset()
+	{
+		for (Point& pos : positions)
+		{
+			pos = startPos;
+		}
+
+		boostAvailable = false;
+		isAlive = true;
+		dead = false;
+		isAnimating = false;
+
+		ChangeSize(5);
+
+
+		myDirection = startDirection;
+		GetStartPositions();
 	}
 
 	void GetStartPositions() {
@@ -66,37 +87,39 @@ public:
 		}
 	}
 
-	void ChangeSize(int size) {//TODO
+	void ChangeSize(int size) {//Changes Size to the specified number
 		if (size == 0)
 			return;
 		if (size <= length)
 		{
+			positions.resize(size);
 			length = size;
 		}
 		else
 		{
-
-			for (int i = 0; i < size - length; i++)
+			positions.resize(size);
+			for (int i = length; i < size; i++)
 			{
-				positions.push_back(positions[length-1]);
+				Point pos(positions[i]);
+				positions[i] = pos;
 			}
 			length = size;
 		}
 	}
 
-	void Boost() {
-		Move(5);
+	void Boost(const GameObject& other) {
+		Move(5, other);
 		boostAvailable = false;
 	}
 
-	void PlayerInput() {
+	void PlayerInput(const GameObject& other) {
 
 		switch (playerSelection)
 		{
 		case P1:
 
 			if (GetAsyncKeyState(VK_LSHIFT) && boostAvailable) {
-				Boost();
+				Boost(other);
 			}
 			else if (GetAsyncKeyState('A') < 0 && myDirection != RIGHT) {
 				myDirection = LEFT;
@@ -116,7 +139,7 @@ public:
 			break;
 		case P2:
 			if (GetAsyncKeyState(VK_RSHIFT) && boostAvailable) {
-				Boost();
+				Boost(other);
 			}
 			else if ((GetAsyncKeyState(VK_LEFT) < 0 || GetAsyncKeyState('J') < 0) && myDirection != RIGHT) {
 				myDirection = LEFT;
@@ -133,27 +156,26 @@ public:
 			break;
 		}
 
-		Move(1);
+		Move(1, other);
 	}
 
 
-	void PlayerCollisionCheck(GameObject other) {
+	bool PlayerCollisionCheck(const GameObject& other) {
 		for (int i = 0; i < other.positions.size(); i++)
 		{
 			if (positions[0] == other.positions[i])
 			{
-				Die();
+				return true;
 			}
 		}
-		if (startInvincibility)
-			return;
 		for (int i = 1; i < length; i++)
 		{
 			if (positions[0] == positions[i])
 			{
-				Die();
+				return true;
 			}
 		}
+		return false;
 	}
 
 	void Die() {
@@ -161,8 +183,13 @@ public:
 		dead = true;
 	}
 
-	bool CollisionCheck() {
-		if (positions[0].x <= 0 && myDirection == LEFT) {
+	bool CollisionCheck(const GameObject& other) {
+		if (PlayerCollisionCheck(other))
+		{
+			Die();
+			return false;
+		}
+		else if (positions[0].x <= 0 && myDirection == LEFT) {
 			Die();
 			return false;
 		}
@@ -179,7 +206,7 @@ public:
 			return false;
 		}
 		else {
-			if (apples->AppleCheck(positions[0])) {
+			if (apples.AppleCheck(positions[0])) {
 				ChangeSize(length + 1);
 				boostAvailable = true;
 			}
@@ -187,55 +214,53 @@ public:
 		return true;
 	}
 
-	void Move(int speed) {
-		switch (myDirection)
+	void Move(int speed, const GameObject& other) {
+
+		if (CollisionCheck(other))
 		{
-		case LEFT:
-			if (CollisionCheck()) {
+			switch (myDirection)
+			{
+			case LEFT:
 				for (int i = length - 1; i > 0; i--)
 				{
 					positions[i] = positions[i - 1];
 				}
 				positions[0].x -= speed;
-			}
-			break;
-		case RIGHT:
-			if (CollisionCheck()) {
+
+				break;
+			case RIGHT:
+
 				for (int i = length - 1; i > 0; i--)
 				{
 					positions[i] = positions[i - 1];
 				}
 				positions[0].x += speed;
-			}
-			break;
-		case UP:
-			if (CollisionCheck()) {
+
+				break;
+			case UP:
 				for (int i = length - 1; i > 0; i--)
 				{
 					positions[i] = positions[i - 1];
 				}
 				positions[0].y -= speed;
-			}
-			break;
-		case DOWN:
-			if (CollisionCheck()) {
+
+				break;
+			case DOWN:
 				for (int i = length - 1; i > 0; i--)
 				{
 					positions[i] = positions[i - 1];
 				}
 				positions[0].y += speed;
+				break;
+			default:
+				break;
 			}
-			break;
-		default:
-			break;
 		}
-
-		startInvincibility = false;
 	}
 
-	void Update() {
+	void Update(const GameObject& other) {
 		
-		PlayerInput();
+		PlayerInput(other);
 	}
 
 	void Draw(Renderer& rend) {

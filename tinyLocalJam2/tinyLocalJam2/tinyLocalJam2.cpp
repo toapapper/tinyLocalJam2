@@ -9,12 +9,18 @@
 #include "Apples.h"
 #include "windows.h"
 
+#define ARENA_WIDTH 20
+#define ARENA_HEIGHT 20
+
 void Game();
 void AnimateDeadPlayer(GameObject& aPlayer, GameObject& anotherPlayer, Renderer& aRend);
 
 bool playing = true;
 int p1Wins = 0;
 int p2Wins = 0;
+
+const Point arenaSize(ARENA_WIDTH, ARENA_HEIGHT);
+
 
 int main()
 {
@@ -28,9 +34,7 @@ int main()
 
 void Game()
 {
-
-	Point canvasSize(30, 30);
-	Renderer rend(canvasSize);
+	Renderer rend(arenaSize);
 	rend.ClearScreen();
 
 	int hyperMode = 0;
@@ -101,9 +105,9 @@ void Game()
 
 	//STart game after this
 
-	AppleEngine* apples = new AppleEngine(rend, canvasSize);
-	GameObject player1(Point(5, 5), 5, 5, RIGHT, canvasSize, P1, apples);
-	GameObject player2(Point(25, 25), 5, 5, LEFT, canvasSize, P2, apples);
+	AppleEngine apples(rend);
+	GameObject player1(Point(5, 5), 5, 5, RIGHT, arenaSize, P1, apples);
+	GameObject player2(Point(ARENA_WIDTH - 5, ARENA_HEIGHT - 5), 5, 5, LEFT, arenaSize, P2, apples);
 
 	int maxDelay = 100, minDelay = 50;
 	unsigned char gameSpeed = maxDelay;
@@ -111,13 +115,11 @@ void Game()
 	while (true)
 	{
 		auto start = std::chrono::steady_clock::now();
-		player1.Update();
-		player2.Update();
-		player1.PlayerCollisionCheck(player2);
-		player2.PlayerCollisionCheck(player1);
+		//player1.Update(player2);
+		player2.Update(player1);
 		player1.Draw(rend);
 		player2.Draw(rend);
-		apples->Draw();
+		apples.Draw();
 
 		if (GetAsyncKeyState(VK_SPACE)) //Pause
 		{
@@ -134,10 +136,9 @@ void Game()
 			{
 				hyperMode--;
 
-				delete apples;
-				apples = new AppleEngine(rend, canvasSize);
-				player1 = GameObject(Point(5, 5), 5, 5, RIGHT, canvasSize, P1, apples);
-				player2 = GameObject(Point(25, 25), 5, 5, LEFT, canvasSize, P2, apples);
+				apples.Reset();
+				player1.Reset();
+				player2.Reset();
 			}
 			else
 			{
@@ -160,10 +161,9 @@ void Game()
 			{
 				hyperMode--;
 
-				delete apples;
-				apples = new AppleEngine(rend, canvasSize);
-				player1 = GameObject(Point(5, 5), 5, 5, RIGHT, canvasSize, P1, apples);
-				player2 = GameObject(Point(25, 25), 5, 5, LEFT, canvasSize, P2, apples);
+				apples.Reset();
+				player1.Reset();
+				player2.Reset();
 			}
 			else
 			{
@@ -185,10 +185,9 @@ void Game()
 			{
 				hyperMode--;
 
-				delete apples;
-				apples = new AppleEngine(rend, canvasSize);
-				player1 = GameObject(Point(5, 5), 5, 5, RIGHT, canvasSize, P1, apples);
-				player2 = GameObject(Point(25, 25), 5, 5, LEFT, canvasSize, P2, apples);
+				apples.Reset();
+				player1.Reset();
+				player2.Reset();
 			}
 			else
 			{
@@ -201,14 +200,14 @@ void Game()
 			gameSpeed--;
 		}
 
-		apples->Update();
+		apples.Update();
 		rend.Update();
 
 		auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start);
 		std::this_thread::sleep_for(std::chrono::milliseconds(gameSpeed)-duration);
 	}
 
-	FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
+	//FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
 }
 
 void AnimateDeadPlayer(GameObject& aPlayer,GameObject& anotherPlayer, Renderer& aRend)

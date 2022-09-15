@@ -6,29 +6,44 @@
 std::random_device seed;
 std::mt19937 randomEngine(seed());
 
+#ifndef ARENA_WIDTH
+#define ARENA_WIDTH 30
+#endif
+
+#ifndef ARENA_HEIGHT
+#define ARENA_HEIGHT 30
+#endif
+
 class AppleEngine {
 	int spawnDelay = 5;//ticks
 	int spawnTimer = 0;
 	Renderer& rend;
-	Point arenaSize;
+	//Point arenaSize;
 
 	std::uniform_int_distribution<int> randX;
 	std::uniform_int_distribution<int> randY;
-	bool* applesTemp;
+	bool apples[ARENA_WIDTH * ARENA_HEIGHT] = {false};
 
 public:
 
-	AppleEngine(Renderer& rend, Point arenaSize) :rend(rend), arenaSize(arenaSize), randX(0, arenaSize.x), randY(0, arenaSize.y)
+	AppleEngine(Renderer& rend) :rend(rend), randX(0, ARENA_WIDTH - 1), randY(0, ARENA_HEIGHT - 1)
 	{
-		applesTemp = new bool[arenaSize.x * arenaSize.y];
-		for (int i = 0; i < arenaSize.x * arenaSize.y; i++)
+		//apples = new bool[arenaSize.x * arenaSize.y];
+		for (int i = 0; i < ARENA_WIDTH * ARENA_HEIGHT; i++)
 		{
-			applesTemp[i] = false;
+			apples[i] = false;
 		}
 	}
 	~AppleEngine()
 	{
-		delete[] applesTemp;
+	}
+
+	void Reset()
+	{
+		for (int i = 0; i < ARENA_WIDTH * ARENA_HEIGHT; i++)
+		{
+			apples[i] = false;
+		}
 	}
 
 	void Update() {
@@ -37,29 +52,27 @@ public:
 			int x = randX(randomEngine);
 			int y = randY(randomEngine);
 
-			applesTemp[y * arenaSize.x + x] = true;
+			apples[y * ARENA_WIDTH + x] = true;
 
 			spawnTimer = 0;
 		}
 	}
 
 	void Draw() {
-
-		for (int x = 0; x < arenaSize.x; x++)
+		for (int x = 0; x < ARENA_WIDTH; x++)
 		{
-			for (int y = 0; y < arenaSize.y; y++)
+			for (int y = 0; y < ARENA_HEIGHT; y++)
 			{
-				if (applesTemp[y * arenaSize.x + x])
+				if (apples[y * ARENA_WIDTH + x])
 					rend.DrawCharacter('a', Point(x, y));
 			}
 		}
 	}
 
 	bool AppleCheck(Point position) {
-
-		if (applesTemp[position.y * arenaSize.x + position.x])
+		if (apples[position.y * ARENA_WIDTH + position.x])
 		{
-			applesTemp[position.y * arenaSize.x + position.x] = false;
+			apples[position.y * ARENA_WIDTH + position.x] = false;
 			return true;
 		}
 

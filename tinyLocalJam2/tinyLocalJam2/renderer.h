@@ -13,22 +13,29 @@ class Point {
 public:
 	int x, y;
 
-	Point(): x(0), y(0){}
+	constexpr Point(): x(0), y(0){}
 
-	Point(int x, int y) {
-		this->x = x;
-		this->y = y;
+	Point(int x, int y) noexcept:x(x),y(y) {}
+	Point(const Point& other) noexcept:x(other.x), y(other.y) {}
+	Point(Point&& other) noexcept:x(other.x),y(other.y){}
+	~Point() = default;
+
+	const bool operator==(const Point& rhs) noexcept
+	{
+		return rhs.x == x && rhs.y == y;
 	}
 
-	Point(const Point& other):x(other.x), y(other.y) {}
-
-	const bool operator==(const Point& rhs) {
-		return rhs.x == this->x && rhs.y == this->y;
+	Point& operator=(const Point& other) noexcept
+	{
+		x = other.x;
+		y = other.y;
+		return *this;
 	}
 
-	const Point& operator=(const Point& other) {
-		this->x = other.x;
-		this->y = other.y;
+	Point& operator=(Point&& other) noexcept
+	{
+		x = other.x;
+		y = other.y;
 		return *this;
 	}
 
@@ -44,6 +51,10 @@ private:
 	char* pixels;
 	HANDLE hOut;
 
+
+	std::string* str;
+
+
 	void ClearDrawCalls() {
 		for (int i = 0; i < _size.x * _size.y; i++) {
 			pixels[i] = ' ';
@@ -54,6 +65,8 @@ private:
 public:
 	Renderer(Point size){
 		_size = size;
+		str = new std::string(5000, ' ');
+
 
 		//Set console window size
 		HWND console = GetConsoleWindow();
@@ -107,9 +120,8 @@ public:
 	}
 
 	
-
 	void Update() {
-		std::string str = "";
+		str->clear();
 
 		cls();
 
@@ -117,60 +129,60 @@ public:
 		for (int y = 0; y < _size.y; y++) {
 			for (int x = 0; x < _size.x; x++) {
 				if (x == 0 || x == _size.x - 1 || y == 0 || y == _size.y - 1) {
-					str.append("\033[3;100;30m");
-					str.push_back(' ');
-					str.push_back(' ');
-					str.append("\033[0m");
+					str->append("\033[3;100;30m");
+					str->push_back(' ');
+					str->push_back(' ');
+					str->append("\033[0m");
 				}
 				else {
-					GameSpecificCharCheck(str, pixels[x + _size.x * y]);
-					str.push_back(' ');
+					GameSpecificCharCheck(*str, pixels[x + _size.x * y]);
+					str->push_back(' ');
 				}
 			}
-			//str.push_back('\n');
-			std::cout << str << std::endl;
-			str = "";
+			str->push_back('\n');
 		}
+		std::cout << *str << std::endl;
+		str->clear();
 
 		ClearDrawCalls();
 	}
 
 	//Ugly hack to add colour to this game
-	void GameSpecificCharCheck(std::string& str, char character)
+	void GameSpecificCharCheck(std::string& aStr, char character)
 	{
 		if (character == 'a' || character == '¤' || character == '*')
 		{
-			str.append("\x1B[31m"); //bright red
-			str.push_back(character);
-			str.append("\033[0m");
+			aStr.append("\x1B[31m"); //bright red
+			aStr.push_back(character);
+			aStr.append("\033[0m");
 		}
 		else if (character == 'x')
 		{
-			str.append("\x1B[33m"); //yellow
-			str.push_back(character);
-			str.append("\033[0m");
+			aStr.append("\x1B[33m"); //yellow
+			aStr.push_back(character);
+			aStr.append("\033[0m");
 		}
 		else if (character == 'X')
 		{
-			str.append("\x1B[93m"); //bright yellow
-			str.push_back(character);
-			str.append("\033[0m");
+			aStr.append("\x1B[93m"); //bright yellow
+			aStr.push_back(character);
+			aStr.append("\033[0m");
 		}
 		else if (character == 'o')
 		{ 
-			str.append("\x1B[36m"); //cyan
-			str.push_back(character);
-			str.append("\033[0m");
+			aStr.append("\x1B[36m"); //cyan
+			aStr.push_back(character);
+			aStr.append("\033[0m");
 		}
 		else if (character == 'O')
 		{
-			str.append("\x1B[96m"); //bright cyan
-			str.push_back(character);
-			str.append("\033[0m");
+			aStr.append("\x1B[96m"); //bright cyan
+			aStr.push_back(character);
+			aStr.append("\033[0m");
 		}
 		else
 		{
-			str.push_back(character);
+			aStr.push_back(character);
 		}
 	}
 
