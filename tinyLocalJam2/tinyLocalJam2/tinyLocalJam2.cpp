@@ -9,8 +9,8 @@
 #include "Apples.h"
 #include "windows.h"
 
-#define ARENA_WIDTH 20
-#define ARENA_HEIGHT 20
+#define ARENA_WIDTH 33
+#define ARENA_HEIGHT 33
 
 void Game();
 void AnimateDeadPlayer(GameObject& aPlayer, GameObject& anotherPlayer, Renderer& aRend);
@@ -115,7 +115,7 @@ void Game()
 	while (true)
 	{
 		auto start = std::chrono::steady_clock::now();
-		//player1.Update(player2);
+		player1.Update(player2);
 		player2.Update(player1);
 		player1.Draw(rend);
 		player2.Draw(rend);
